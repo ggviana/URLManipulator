@@ -80,6 +80,11 @@
 		return hash[1];
 	};
 	
+	fn.setFragment = function(value){
+		var hash = this.getURL().split('#');
+		_setURL(hash[0] + '#' + value);
+	};
+	
 	fn.submit = function(){
 		context.location.href = this.getURL();
 	};
