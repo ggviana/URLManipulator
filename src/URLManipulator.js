@@ -27,7 +27,7 @@
 	};
 	
 	fn.setParameter = function(key, value){
-		var hash = this.getURL().split('#');
+		var urlParts = _getURLParts(this.getURL());
 		
 		if(this.parameterExists(key)){
 			var re = new RegExp("([?|&])" + key + "=.*?(&|#|$)(.*)", "gi");
@@ -36,18 +36,18 @@
 				_setURL(this.getURL().replace(re, '$1' + key + "=" + value.toString() + '$2$3'));
 			}
 			else{
-				_setURL(hash[0].replace(re, '$1$3').replace(/(&|\?)$/, ''));
-				if (typeof hash[1] !== 'undefined' && hash[1] !== null){
-					_setURL(this.getURL() + '#' + hash[1]);
+				_setURL(urlParts.url.replace(re, '$1$3').replace(/(&|\?)$/, ''));
+				if (_valueIsValid(urlParts.fragment)){
+					this.setFragment(urlParts.fragment);
 				}
 			}
 		}
 		else{
 			if(_valueIsValid(value)){
 				var separator = this.getURL().indexOf('?') !== -1 ? '&' : '?';
-				_setURL(hash[0] + separator + key + '=' + value.toString());
-				if (typeof hash[1] !== 'undefined' && hash[1] !== null){
-					_setURL(this.getURL() + '#' + hash[1]);
+				_setURL(urlParts.url + separator + key + '=' + value.toString());
+				if (_valueIsValid(urlParts.fragment)){
+					this.setFragment(urlParts.fragment);
 				}
 			}
 		}
@@ -55,6 +55,14 @@
 	
 	var _valueIsValid = function(value){
 		return typeof value !== 'undefined' && value !== null;
+	};
+	
+	var _getURLParts = function(url){
+		var hash = url.split('#');
+		if(hash.length > 2){
+			throw("Invalid URL format! It should not have more than one '#' symbol.");
+		}
+		return {"url":hash[0], "fragment":hash[1]};
 	};
 	
 	fn.getParameter = function(key){
@@ -76,13 +84,15 @@
 	};
 	
 	fn.getFragment = function(){
-		var hash = this.getURL().split('#');
-		return hash[1];
+		return _getURLParts(this.getURL()).fragment;
 	};
 	
 	fn.setFragment = function(value){
-		var hash = this.getURL().split('#');
-		_setURL(hash[0] + '#' + value);
+		var appendToURL = '';
+		if(_valueIsValid(value)){
+			appendToURL = '#' + value;
+		}
+		_setURL(_getURLParts(this.getURL()).url + appendToURL);
 	};
 	
 	fn.submit = function(){
