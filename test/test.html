@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>URLManipulator test</title>
+		<link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-git.css">
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+		<script src="http://code.jquery.com/qunit/qunit-git.js"></script>
+		<script src="../src/URLManipulator.js"></script>
+		<script>
+			var url = 'foo://username:password@example.com:8042/over/there/index.dtb?type=animal&name=narwhal#nose';
+			
+			test("Testing if parameter 'name' exists in url", function() {
+				var um = new URLManipulator(url);
+				equal(um.parameterExists('name'), true, "We expect the parameter to exist" );
+			});
+			
+			test("Testing if parameter 'age' exists in url", function() {
+				var um = new URLManipulator(url);
+				equal(um.parameterExists('age'), false, "We expect the parameter to not exist" );
+			});
+			
+			test("Testing if parameter null exists in url", function() {
+				var um = new URLManipulator(url);
+				equal(um.parameterExists(null), false, "We expect the parameter to not exist" );
+			});
+			
+			test("Testing if parameter value return correct value", function() {
+				var um = new URLManipulator(url);
+				equal(um.getParameter('type'), "animal", "We expect the parameter 'type' to be 'animal'" );
+			});
+			
+			test("Testing if removing parameter 'type' makes return value to be undefined", function() {
+				var um = new URLManipulator(url);
+				um.setParameter('type', "mammal");
+				um.setParameter('type');
+				equal(um.getParameter('type'), undefined, "We expect the parameter 'type' to be undefined" );
+			});
+			
+			test("Testing if parameter value changes", function() {
+				var um = new URLManipulator(url);
+				um.setParameter('type', 'mammal');
+				equal(um.getParameter('type'), "mammal", "We expect the parameter 'type' to be 'mammal'" );
+			});
+			
+			test("Testing if parameter 'type' is removed if value is not assigned", function() {
+				var um = new URLManipulator(url);
+				um.setParameter('type', "mammal");
+				um.setParameter('type');
+				equal(um.parameterExists('type'), false, "We expect the parameter 'type' to not exist" );
+			});
+			
+			test("Testing if parameter 'type' is removed if null value is assigned", function() {
+				var um = new URLManipulator(url);
+				um.setParameter('type', "mammal");
+				um.setParameter('type', null);
+				equal(um.parameterExists('type'), false, "We expect the parameter 'type' to not exist" );
+			});
+			
+			test("Testing if new parameter is created", function() {
+				var um = new URLManipulator(url);
+				um.setParameter('gender', "male");
+				equal(um.parameterExists('gender'), true, "We expect the parameter 'gender' to exist" );
+			});
+			
+			test("Testing if setting parameter null actually creates a parameter named 'null'", function() {
+				var um = new URLManipulator(url);
+				um.setParameter(null, "mammal");
+				equal(um.parameterExists('null'), true, "We expect the parameter 'null' to exist" );
+			});
+			
+			test("Testing if hash value return correct value", function() {
+				var um = new URLManipulator(url);
+				equal(um.getFragment(), "nose", "We expect the fragment to be 'nose'" );
+			});
+			
+			test("Testing if hash value is changed", function() {
+				var um = new URLManipulator(url);
+				um.setFragment('eye');
+				equal(um.getFragment(), "eye", "We expect the fragment to be 'eye'" );
+			});
+			
+			test("Testing if hash value is removed if assigned no value", function() {
+				var um = new URLManipulator(url);
+				um.setFragment();
+				equal(um.getFragment(), undefined, "We expect the fragment to not exist" );
+			});
+			
+		</script>
+	</body>
+</html>
