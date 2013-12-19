@@ -54,7 +54,7 @@
 	};
 	
 	fn.clearParameters = function(){
-		var re = new RegExp("(.*?)\?.*", "i");
+		var re = new RegExp("(.*)\?.*", "i");
 		var newURL = this.getURL().replace(re,'$1');
 		_setURL(newURL);
 	};
