@@ -66,10 +66,10 @@
 				equal(um.parameterExists('gender'), true, "We expect the parameter 'gender' to exist" );
 			});
 			
-			test("Testing if setting parameter null actually creates a parameter named 'null'", function() {
+			test("Testing if setting parameter null does not creates a parameter named 'null'", function() {
 				var um = new URLManipulator(url);
 				um.setParameter(null, "mammal");
-				equal(um.parameterExists('null'), true, "We expect the parameter 'null' to exist" );
+				equal(um.parameterExists('null'), false, "We expect the parameter 'null' to exist" );
 			});
 			
 			test("Testing if hash value return correct value", function() {
