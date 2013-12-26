@@ -26,18 +26,21 @@
 		_url = newURL;
 	};
 	
+	var _isString = function(value){
+		return typeof '' === typeof value;
+	};
 	
 	fn.setParameter = function(key, value){
-		var urlParts = _getURLParts(this.getURL());
 		var self = this;
 		
 		var _changeFragment = function(fragment){
 			if(_valueIsValid(fragment)){
-				self.setFragment(urlParts.fragment);
+				self.setFragment(fragment);
 			}
 		};
 		
 		var _changeParameter = function(key, value){
+			var urlParts = _getURLParts(self.getURL());
 			var re = new RegExp("([?|&])" + key + "=.*?(&|#|$)(.*)", "gi");
 			
 			if (_valueIsValid(value))
@@ -49,17 +52,32 @@
 		};
 		
 		var _createParameter = function(key, value){
+			var urlParts = _getURLParts(self.getURL());
+			
 			if(_valueIsValid(value)){
 				var separator = self.getURL().indexOf('?') !== -1 ? '&' : '?';
 				_setURL(urlParts.url + separator + key + '=' + value.toString());
 				_changeFragment(urlParts.fragment);
 			}
 		};
-
-		if(this.parameterExists(key))
-			_changeParameter(key, value);
-		else
-			_createParameter(key, value);
+		
+		if(_isString(key)){
+			if(this.parameterExists(key))
+				_changeParameter(key, value);
+			else
+				_createParameter(key, value);
+		}
+		else{
+			var parameters = key;
+			for(var parameterKey in parameters){
+				var parameterValue = parameters[parameterKey];
+				
+				if(this.parameterExists(parameterKey))
+					_changeParameter(parameterKey, parameterValue);
+				else
+					_createParameter(parameterKey, parameterValue);
+			}
+		}
 	};
 	
 	fn.clearParameters = function(){
