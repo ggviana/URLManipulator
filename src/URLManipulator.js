@@ -26,31 +26,40 @@
 		_url = newURL;
 	};
 	
+	
 	fn.setParameter = function(key, value){
 		var urlParts = _getURLParts(this.getURL());
+		var self = this;
 		
-		if(this.parameterExists(key)){
+		var _changeFragment = function(fragment){
+			if(_valueIsValid(fragment)){
+				self.setFragment(urlParts.fragment);
+			}
+		};
+		
+		var _changeParameter = function(key, value){
 			var re = new RegExp("([?|&])" + key + "=.*?(&|#|$)(.*)", "gi");
 			
-			if (_valueIsValid(value)){
-				_setURL(this.getURL().replace(re, '$1' + key + "=" + value.toString() + '$2$3'));
-			}
+			if (_valueIsValid(value))
+				_setURL(self.getURL().replace(re, '$1' + key + "=" + value.toString() + '$2$3'));
 			else{
 				_setURL(urlParts.url.replace(re, '$1$3').replace(/(&|\?)$/, ''));
-				if (_valueIsValid(urlParts.fragment)){
-					this.setFragment(urlParts.fragment);
-				}
+				_changeFragment(urlParts.fragment);
 			}
-		}
-		else{
+		};
+		
+		var _createParameter = function(key, value){
 			if(_valueIsValid(value)){
-				var separator = this.getURL().indexOf('?') !== -1 ? '&' : '?';
+				var separator = self.getURL().indexOf('?') !== -1 ? '&' : '?';
 				_setURL(urlParts.url + separator + key + '=' + value.toString());
-				if (_valueIsValid(urlParts.fragment)){
-					this.setFragment(urlParts.fragment);
-				}
+				_changeFragment(urlParts.fragment);
 			}
-		}
+		};
+
+		if(this.parameterExists(key))
+			_changeParameter(key, value);
+		else
+			_createParameter(key, value);
 	};
 	
 	fn.clearParameters = function(){
