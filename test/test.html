@@ -66,6 +66,17 @@
 				equal(um.parameterExists('gender'), true, "We expect the parameter 'gender' to exist" );
 			});
 			
+			test("Testing if new parameters are created by passing a object", function() {
+				var um = new URLManipulator(url);
+				var parameters = {
+					"gender":"male",
+					"age":13,
+				};
+				um.setParameter(parameters);
+				var parametersExists = um.parameterExists('gender') && um.parameterExists('age'); 
+				equal(parametersExists, true, "We expect the parameter 'gender' to exist" );
+			});
+			
 			test("Testing if setting parameter null does not creates a parameter named 'null'", function() {
 				var um = new URLManipulator(url);
 				um.setParameter(null, "mammal");
