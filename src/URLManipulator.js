@@ -70,12 +70,14 @@
 		else{
 			var parameters = key;
 			for(var parameterKey in parameters){
-				var parameterValue = parameters[parameterKey];
-				
-				if(this.parameterExists(parameterKey))
-					_changeParameter(parameterKey, parameterValue);
-				else
-					_createParameter(parameterKey, parameterValue);
+				if(parameters.hasOwnProperty(parameterKey)){
+					var parameterValue = parameters[parameterKey];
+					
+					if(this.parameterExists(parameterKey))
+						_changeParameter(parameterKey, parameterValue);
+					else
+						_createParameter(parameterKey, parameterValue);
+				}
 			}
 		}
 	};
